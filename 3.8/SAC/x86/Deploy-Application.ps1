@@ -51,7 +51,7 @@ Param (
 	[switch]$TerminalServerMode = $false,
 	[Parameter(Mandatory=$false)]
 	[switch]$DisableLogging = $false,
-	[Parameter(Mandatory=$true)]
+	[Parameter(Mandatory=$false)]
 	[ValidateSet('O365ProPlusRetail','VisioProRetail','ProjectProRetail','ProjectProXVolume','VisioProXVolume','ProjectStdXVolume','VisioStdXVolume')]
 	[string]$Products = 'O365ProPlusRetail'
 )
@@ -325,97 +325,203 @@ Try {
 		if ($office2k7) {
 			try {
 				Write-Log -Message "Uninstalling Office Professional Plus 2007" -Severity 1 -Source $deployAppScriptFriendlyName
-				$scrub = Execute-Process -Path "$envSystem32Directory\cscript.exe" -Parameters "$dirSupportFiles\OffScrub07.vbs ALL /FR /QUIET /LOG $configToolkitLogDir\Office_2007_Uninstall" -WindowStyle 'Hidden'
-				Write-Log -Message "Uninstalled Office Professional PLus 2007. Exit code: $($scrub.ExitCode)" -Severity 1 -Source $deployAppScriptFriendlyName
+				$scrub = Execute-Process -Path "$envSystem32Directory\cscript.exe" -Parameters "$dirSupportFiles\OffScrub07.vbs ALL /FR /QUIET /LOG $configToolkitLogDir\Office_2007_Uninstall" -WindowStyle 'Hidden' -PassThru
+                Write-Log -Message "Uninstalled Office Professional PLus 2007. Exit code: $($scrub.ExitCode)" -Severity 1 -Source $deployAppScriptFriendlyName
 			} catch {
 				Write-Log -Message "Failure: $($Error[0].Exception.Message)" -Severity 3 -Source $deployAppScriptFriendlyName
-			}
+			} finally { 
+                $mainExitCode = $scrub.ExitCode
+            }
 		}
 
 		# Office 2010
 		if ($office2k10) {
 			try {
 				Write-Log -Message "Uninstalling Office Professional Plus 2010" -Severity 1 -Source $deployAppScriptFriendlyName
-				$scrub = Start-Process -FilePath 'cscript' -ArgumentList "$dirSupportFiles\OffScrub10.vbs ALL /FR /QUIET /LOG $configToolkitLogDir\Office_2010_Uninstall" -WindowStyle Hidden -Wait -PassThru -ErrorAction Stop
-				$scrub.WaitForExit()
+				$scrub = Execute-Process -Path "$envSystem32Directory\cscript.exe" -Parameters "$dirSupportFiles\OffScrub10.vbs ALL /FR /QUIET /LOG $configToolkitLogDir\Office_2010_Uninstall" -WindowStyle 'Hidden' -PassThru
 				Write-Log -Message "Uninstalled Office Professional PLus 2010. Exit code: $($scrub.ExitCode)" -Severity 1 -Source $deployAppScriptFriendlyName
 			} catch {
 				Write-Log -Message "Failure: $($Error[0].Exception.Message)" -Severity 3 -Source $deployAppScriptFriendlyName
-			}
+			} finally {
+                $mainExitCode = $scrub.ExitCode
+            }
 		}
 
 		# Office 2013
 		if ($office2k13) {
 			try {
 				Write-Log -Message "Uninstalling Office Professional Plus 2013" -Severity 1 -Source $deployAppScriptFriendlyName
-				$scrub = Start-Process -FilePath 'cscript' -ArgumentList "$dirSupportFiles\OffScrub_O15msi.vbs ALL /FR /QUIET /LOG $configToolkitLogDir\Office_2013_Uninstall" -WindowStyle Hidden -Wait -PassThru -ErrorAction Stop
-				$scrub.WaitForExit()
+				$scrub = Execute-Process -Path "$envSystem32Directory\cscript.exe" -Parameters "$dirSupportFiles\OffScrub_O15msi.vbs ALL /FR /QUIET /LOG $configToolkitLogDir\Office_2013_Uninstall" -WindowStyle 'Hidden' -PassThru
 				Write-Log -Message "Uninstalled Office Professional Plus 2013. Exit code: $($scrub.ExitCode)" -Severity 1 -Source $deployAppScriptFriendlyName
 			} catch {
 				Write-Log -Message "Failure: $($Error[0].Exception.Message)" -Severity 3 -Source $deployAppScriptFriendlyName
-			}
-		}
-
-		# infopath 2013
-		if ($info2k13) {
-			try {
-				Write-Log -Message "Uninstalling Microsoft InfoPath 2013" -Severity 1 -Source $deployAppScriptFriendlyName
-				$scrub = Start-Process -FilePath 'cscript' -ArgumentList "$dirSupportFiles\OffScrub_O15msi.vbs ALL /FR /QUIET /LOG $configToolkitLogDir\Office_2013_Uninstall" -WindowStyle Hidden -Wait -PassThru -ErrorAction Stop
-				$scrub.WaitForExit()
-				Write-Log -Message "Uninstalled InfoPath 2013. Exit code: $($scrub.ExitCode)" -Severity 1 -Source $deployAppScriptFriendlyName
-			} catch {
-				Write-Log -Message "Failure: $($Error[0].Exception.Message)" -Severity 3 -Source $deployAppScriptFriendlyName
-			}
+			} finally {
+                $mainExitCode = $scrub.ExitCode
+            }
 		}
 
 		# Office 2016
 		if ($office2k16) {
 			try {
 				Write-Log -Message "Uninstalling Office Professional Plus 2016" -Severity 1 -Source $deployAppScriptFriendlyName
-				$scrub = Start-Process -FilePath 'cscript' -ArgumentList "$dirSupportFiles\OffScrub_O16msi.vbs ALL /FR /QUIET /LOG $configToolkitLogDir\Office_2016_Uninstall" -WindowStyle Hidden -Wait -PassThru -ErrorAction Stop
-				$scrub.WaitForExit()
+				$scrub = Execute-Process -Path "$envSystem32Directory\cscript.exe" -Parameters "$dirSupportFiles\OffScrub_O16msi.vbs ALL /FR /QUIET /LOG $configToolkitLogDir\Office_2016_Uninstall" -WindowStyle 'Hidden' -PassThru
 				Write-Log -Message "Uninstalled Office Professional Plus 2016. Exit code: $($scrub.ExitCode)" -Severity 1 -Source $deployAppScriptFriendlyName
 			} catch {
 				Write-Log -Message "Failure: $($Error[0].Exception.Message)" -Severity 3 -Source $deployAppScriptFriendlyName
-			}
+			} finally {
+                $mainExitCode = $scrub.ExitCode
+            }
 		}
 
 		# Office 2019
 		if ($office2k19) {
 			try {
 				Write-Log -Message "Uninstalling Office Professional Plus 2019" -Severity 1 -Source $deployAppScriptFriendlyName
-				$scrub = Start-Process -FilePath 'cscript' -ArgumentList "$dirSupportFiles\OffScrubC2R.vbs /QUIET /RETERRORSUCCESS /LOG $configToolkitLogDir\Office_proplus_2019_Uninstall" -WindowStyle Hidden -Wait -PassThru -ErrorAction Stop
-				$scrub.WaitForExit()
+				$scrub = Execute-Process -Path "$envSystem32Directory\cscript.exe" -Parameters "$dirSupportFiles\OffScrubC2R.vbs /QUIET /RETERRORSUCCESS /LOG $configToolkitLogDir\Office_proplus_2019_Uninstall" -WindowStyle 'Hidden' -PassThru
 				Write-Log -Message "Uninstalled Office Professional Plus 2019. Exit code: $($scrub.ExitCode)" -Severity 1 -Source $deployAppScriptFriendlyName
 			} catch {
 				Write-Log -Message "Failure: $($Error[0].Exception.Message)" -Severity 3 -Source $deployAppScriptFriendlyName
-			}
+			} finally {
+                $mainExitCode = $scrub.ExitCode
+            }
 		}
 
 		# Office 365 ProPlus
 		if ($office365 -or $migrateChannel) {
 			try {
 				Write-Log -Message "Uninstalling Office 365 ProPlus" -Severity 1 -Source $deployAppScriptFriendlyName
-				$scrub = Start-Process -FilePath 'cscript' -ArgumentList "$dirSupportFiles\OffScrubC2R.vbs /QUIET /RETERRORSUCCESS /LOG $configToolkitLogDir\Office_365_proplus_Uninstall" -WindowStyle Hidden -Wait -PassThru -ErrorAction Stop
-				$scrub.WaitForExit()
+				$scrub = Execute-Process -Path "$envSystem32Directory\cscript.exe" -Parameters "$dirSupportFiles\OffScrubC2R.vbs /QUIET /RETERRORSUCCESS /LOG $configToolkitLogDir\Office_365_proplus_Uninstall" -WindowStyle 'Hidden' -PassThru
 				Write-Log -Message "Uninstalled Office 365 ProPlus. Exit code: $($scrub.ExitCode)" -Severity 1 -Source $deployAppScriptFriendlyName
 			} catch {
 				Write-Log -Message "Failure: $($Error[0].Exception.Message)" -Severity 3 -Source $deployAppScriptFriendlyName
-			}
+			} finally {
+                $mainExitCode = $scrub.ExitCode
+            }
 		}
+
+		# Build configuration file
+		$config = ""
+
+		If ($newProducts.Contains('O365ProPlusRetail')) {
+    		$config += @"
+    <Product ID="O365ProPlusRetail">
+      <Language ID="en-us" />
+      <ExcludeApp ID="Groove" />
+    </Product>
+
+"@
+}
+
+		if ($newProducts.Contains('VisioStdXVolume')) {
+    		$config += @"
+    <Product ID="VisioStdXVolume" PIDKEY="NY48V-PPYYH-3F4PX-XJRKJ-W4423">
+      <Language ID="en-us" />
+      <ExcludeApp ID="Groove" />
+    </Product>
+
+"@
+}
+
+		if ($newProducts.Contains('VisioProXVolume')) {
+			$config += @"
+    <Product ID="VisioProXVolume" PIDKEY="69WXN-MBYV6-22PQG-3WGHK-RM6XC">
+      <Language ID="en-us" />
+      <ExcludeApp ID="Groove" />
+    </Product>
+
+"@
+}
+
+		if ($newProducts.Contains('ProjectStdXVolume')) {
+			$config += @"
+    <Product ID="ProjectStdXVolume" PIDKEY="D8NRQ-JTYM3-7J2DX-646CT-6836M">
+      <Language ID="en-us" />
+      <ExcludeApp ID="Groove" />
+    </Product>
+
+"@
+}
+
+		if ($newProducts.Contains('ProjectProXVolume')) {
+			$config += @"
+    <Product ID="ProjectProXVolume" PIDKEY="WGT24-HCNMF-FQ7XH-6M8K7-DRTW9">
+      <Language ID="en-us" />
+      <ExcludeApp ID="Groove" />
+    </Product>
+
+"@
+}
+
+		if ($newProducts.Contains('VisioProRetail')) {
+			$config += @"
+    <Product ID="VisioProRetail">
+      <Language ID="en-us" />
+      <ExcludeApp ID="Groove" />
+    </Product>
+
+"@
+}
+
+		if ($newProducts.Contains('ProjectProRetail')) {
+			$config += @"
+    <Product ID="ProjectProRetail">
+      <Language ID="en-us" />
+      <ExcludeApp ID="Groove" />
+    </Product>
+
+"@
+}
+
+$configXML = @"
+<Configuration>
+  <Add OfficeClientEdition="32" Channel="Broad" >
+
+$($config)
+
+  </Add>
+
+  <Display Level="None" AcceptEULA="TRUE" />
+  <Logging Level="Standard" Path="$($configToolkitLogDir)" />
+  <Property Name="FORCEAPPSHUTDOWN" Value="TRUE"/>
+
+</Configuration>
+"@
+
+		# Log location of configuration.xml file
+		Write-Log -Message "The final Office 365 ProPlus 32-bit (Semi-Annual Channel) confirugarion will be written at `"$configXmlFilePath`"" -Severity 1 -Source $deployAppScriptFriendlyName
+
+		# if configuration XML file exists, let's remove it
+        $configXmlFilePath = Join-Path $envTemp 'configuration.xml'
+		if (Test-Path -Path $configXmlFilePath) {
+			Write-Log -Message "Removing existing configuration.xml file from: `"$configXmlFilePath`"" -Severity 1 -Source $deployAppScriptFriendlyName
+			Remove-Item -Path $configXmlFilePath -Force -ErrorAction SilentlyContinue
+		}
+
+		# Write Configuration XML file
+		$configXML | Out-File -FilePath $configXmlFilePath -Encoding default -Force
 
 		##*===============================================
 		##* INSTALLATION
 		##*===============================================
 		[string]$installPhase = 'Installation'
 
-		## Handle Zero-Config MSI Installations
-		If ($useDefaultMsi) {
-			[hashtable]$ExecuteDefaultMSISplat =  @{ Action = 'Install'; Path = $defaultMsiFile }; If ($defaultMstFile) { $ExecuteDefaultMSISplat.Add('Transform', $defaultMstFile) }
-			Execute-MSI @ExecuteDefaultMSISplat; If ($defaultMspFiles) { $defaultMspFiles | ForEach-Object { Execute-MSI -Action 'Patch' -Path $_ } }
-		}
+		## Install Office 365 ProPlus
 
-		## <Perform Installation tasks here>
+		try {
+			Write-Log -Message "Starting: Office 365 ProPlus configuration" -Severity 1 -Source $deployAppScriptFriendlyName
+			$install = Execute-Process -Path "$dirFiles\Setup.exe" -Parameters "/configure `"$configXmlFilePath`"" -PassThru
+			Write-Log -Message "Exit Code: $($install.ExitCode)" -Severity 1 -Source $deployAppScriptFriendlyName
+		} catch {
+			Write-Log -Message "Failure: $($Error[0].Exception.Message)" -Severity 3 -Source $deployAppScriptFriendlyName
+			Write-Log -Message "Failure: $($install.ExitCode)" -Severity 3 -Source $deployAppScriptFriendlyName
+		} finally {
+            $mainExitCode = $install.ExitCode
+        }
+		
+		if ($mainExitCode -ne 0) {
+			Write-Log -Message "Failure: Please check logs at $configToolkitLogDir" -Severity 3 -Source $deployAppScriptFriendlyName
+			Write-Log -Message "Exit code: $($mainExitCode)" -Severity 3 -Source $deployAppScriptFriendlyName
+		}
 
 
 		##*===============================================
@@ -424,9 +530,7 @@ Try {
 		[string]$installPhase = 'Post-Installation'
 
 		## <Perform Post-Installation tasks here>
-
-		## Display a message at the end of the install
-		If (-not $useDefaultMsi) { Show-InstallationPrompt -Message 'Office 365 ProPlus has been configured.' -ButtonRightText 'OK' -Icon Information -NoWait }
+		
 	}
 	ElseIf ($deploymentType -ieq 'Uninstall')
 	{
@@ -435,27 +539,123 @@ Try {
 		##*===============================================
 		[string]$installPhase = 'Pre-Uninstallation'
 
-		## Show Welcome Message, close Internet Explorer with a 60 second countdown before automatically closing
-		Show-InstallationWelcome -CloseApps 'iexplore' -CloseAppsCountdown 60
+		## Show Welcome Message, close Office applications if required, allow up to 3 deferrals, verify there is enough disk space to complete the install, and persist the prompt
+		Show-InstallationWelcome -CloseApps 'excel,groove,onenote,onenotem,infopath,onenote,outlook,mspub,powerpnt,lync,communicator,winword,winproj,visio' -AllowDefer -DeferTimes 3 -CheckDiskSpace -PersistPrompt
 
 		## Show Progress Message (with the default message)
 		Show-InstallationProgress
 
-		## <Perform Pre-Uninstallation tasks here>
+        $config = "" 
 
+        if ($Products.Contains('O365ProPlusRetail')) {
+            $config += @"
+    <Product ID="O365ProPlusRetail">
+      <Language ID="en-us" />
+    </Product>
 
+"@
+}
+
+        if ($Products.Contains('VisioStdXVolume')) {
+            $config += @"
+    <Product ID="VisioStdXVolume">
+      <Language ID="en-us" />
+    </Product>
+
+"@
+}
+
+        if ($Products.Contains('VisioProXVolume')) {
+            $config += @"
+    <Product ID="VisioProXVolume">
+      <Language ID="en-us" />
+    </Product>
+
+"@
+}
+
+        if ($Products.Contains('ProjectStdXVolume')) {
+            $config += @"
+    <Product ID="ProjectStdXVolume">
+      <Language ID="en-us" />
+    </Product>
+
+"@
+}
+
+        if ($Products.Contains('ProjectProXVolume')) {
+            $config += @"
+    <Product ID="ProjectProXVolume">
+      <Language ID="en-us" />
+    </Product>
+
+"@
+}
+
+        if ($Products.Contains('VisioProRetail')) {
+            $config += @"
+    <Product ID="VisioProRetail">
+      <Language ID="en-us" />
+    </Product>
+
+"@
+}
+
+        if ($Products.Contains('ProjectProRetail')) {
+            $config += @"
+    <Product ID="ProjectProRetail">
+      <Language ID="en-us" />
+    </Product>
+
+"@
+}
+
+$configXML = @"
+<Configuration>
+  <Remove ALL="FALSE">
+
+$($config)
+
+  </Remove>
+
+  <Display Level="None" AcceptEULA="TRUE" />
+  <Logging Level="Standard" Path="$($configToolkitLogDir)" />
+  <Property Name="FORCEAPPSHUTDOWN" Value="TRUE"/>
+
+</Configuration>
+"@
+
+        # if configuration XML file exists, let's remove it
+        if (Test-Path -Path $configXmlFilePath) {
+            Write-Log -Message "Removing existing configuration.xml file from: `"$configXmlFilePath`"" -Severity 1 -Source $deployAppScriptFriendlyName
+            Remove-Item -Path $configXmlFilePath -Force -ErrorAction SilentlyContinue
+        }
+
+        # Write Configuration XML file
+        $configXML | Out-File -FilePath $configXmlFilePath -Encoding default -Force
+		
 		##*===============================================
 		##* UNINSTALLATION
 		##*===============================================
 		[string]$installPhase = 'Uninstallation'
 
-		## Handle Zero-Config MSI Uninstallations
-		If ($useDefaultMsi) {
-			[hashtable]$ExecuteDefaultMSISplat =  @{ Action = 'Uninstall'; Path = $defaultMsiFile }; If ($defaultMstFile) { $ExecuteDefaultMSISplat.Add('Transform', $defaultMstFile) }
-			Execute-MSI @ExecuteDefaultMSISplat
-		}
+		## Uninstall Office 365 ProPlus
 
-		# <Perform Uninstallation tasks here>
+        try {
+			Write-Log -Message "Starting: Office 365 ProPlus configuration" -Severity 1 -Source $deployAppScriptFriendlyName
+			$uninstall = Execute-Process -Path "$dirFiles\Setup.exe" -Parameters "/configure `"$configXmlFilePath`"" -PassThru
+			Write-Log -Message "Exit Code: $($uninstall.ExitCode)" -Severity 1 -Source $deployAppScriptFriendlyName
+		} catch {
+			Write-Log -Message "Failure: $($Error[0].Exception.Message)" -Severity 3 -Source $deployAppScriptFriendlyName
+			Write-Log -Message "Failure: $($uninstall.ExitCode)" -Severity 3 -Source $deployAppScriptFriendlyName
+		} finally {
+            $mainExitCode = $uninstall.ExitCode
+        }
+		
+		if ($mainExitCode -ne 0) {
+			Write-Log -Message "Failure: Please check logs at $configToolkitLogDir" -Severity 3 -Source $deployAppScriptFriendlyName
+			Write-Log -Message "Exit code: $($mainExitCode)" -Severity 3 -Source $deployAppScriptFriendlyName
+		}
 
 
 		##*===============================================
